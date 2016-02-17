@@ -36,6 +36,14 @@ public:
 private slots:
     void on_okBtn_clicked();
 
+    void on_upBtn_clicked();
+
+    void on_rightBtn_clicked();
+
+    void on_downBtn_clicked();
+
+    void on_leftBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
@@ -53,6 +61,8 @@ private:
     void displayItems();
     void teleport();
     void setListViewText();
+    void addToListView(QString s);
+    void clearListView();
 
     //QString getName() const
     //{

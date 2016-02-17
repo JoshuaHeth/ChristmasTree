@@ -8,6 +8,11 @@ using namespace std;
 #include <stdlib.h>
 #include <iostream>
 
+inline void MainWindow::clearListView()
+{
+    stringList.clear();
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -58,7 +63,7 @@ void MainWindow::createRooms()  {
 //                  (N, E, S, W)
     prison->setExits(NULL, observation, NULL, NULL);
     observation->setExits(NULL, battle, mainStairwell, prison);
-    battle->setExits(NULL, NULL, NULL, observation);
+    battle->setExits(NULL, NULL, hallway, observation);
     mainStairwell->setExits(observation, hallway, sickbay, NULL); //secondaryStairwell);
     sickbay->setExits(mainStairwell, NULL, NULL, NULL);
     hallway->setExits(battle, cockpit, NULL, mainStairwell);
@@ -133,7 +138,7 @@ void MainWindow::printWelcome() {
 bool MainWindow::processCommand(Command command) {
     if (command.isUnknown()) {
         //cout << "invalid input"<< endl;
-        stringList.clear();
+        clearListView();
         stringList.append("Welcome to the game!");
         setListViewText();
         return false;
@@ -145,12 +150,12 @@ bool MainWindow::processCommand(Command command) {
 
     else if (commandWord.compare("map") == 0)
         {
-            stringList.clear();
-            stringList.append("[prison] --- [observation] --- [battle]               ");
-            stringList.append("                  |                |                  ");
-            stringList.append("              [stairwell] ---- [hallway] --- [cockpit]");
-            stringList.append("                  |                                   ");
-            stringList.append("              [sickbay]                               ");
+            clearListView();
+            stringList.append("[prison] --- [observation] --- [battle]");
+            stringList.append("\t|\t|");
+            stringList.append("\t[stairwell] ---- [hallway] --- [cockpit]");
+            stringList.append("\t|");
+            stringList.append("\t[sickbay]");
             setListViewText();
         }
 
@@ -160,7 +165,10 @@ bool MainWindow::processCommand(Command command) {
     else if (commandWord.compare("take") == 0)
     {
         if (!command.hasSecondWord()) {
-        cout << "incomplete input"<< endl;
+            clearListView();
+            //cout << "incomplete input"<< endl;
+            stringList.append("incomplete input");
+            setListViewText();
         }
         else
          if (command.hasSecondWord()) {
@@ -193,10 +201,14 @@ bool MainWindow::processCommand(Command command) {
     }
 */
     else if (commandWord.compare("teleport") == 0){
+        clearListView();
         int roomNumber = rand() % rooms.size();
         Room randomRoom = rooms.at(roomNumber);
         currentRoom = &randomRoom;
-        cout << randomRoom.longDescription() << endl;
+        QString qstr = QString::fromStdString(randomRoom.longDescription());
+        stringList.append(qstr);
+        //cout << randomRoom.longDescription() << endl;
+        setListViewText();
     }
 
     else if (commandWord.compare("quit") == 0) {
@@ -210,11 +222,11 @@ bool MainWindow::processCommand(Command command) {
 /** COMMANDS **/
 void MainWindow::printHelp() {
     //cout << "valid inputs are; " << endl;
-    stringList.clear();
+    clearListView();
     stringList.append("Valid inputs are:");
     vector<string> commandWords = parser.showCommands();
 
-    for(int i = 0; i < commandWords.size();i++)
+    for(unsigned int i = 0; i < commandWords.size();i++)
     {
         QString qstr = QString::fromStdString(commandWords[i]);
         stringList.append(qstr);
@@ -224,7 +236,9 @@ void MainWindow::printHelp() {
 
 void MainWindow::goRoom(Command command) {
     if (!command.hasSecondWord()) {
-        cout << "incomplete input"<< endl;
+        //clearListView();
+        stringList.append("incomplete input");
+        setListViewText();
         return;
     }
 
@@ -233,11 +247,18 @@ void MainWindow::goRoom(Command command) {
     // Try to leave current room.
     Room* nextRoom = currentRoom->nextRoom(direction);
 
-    if (nextRoom == NULL)
-        cout << "underdefined input"<< endl;
+    if (nextRoom == NULL){
+        //clearListView();
+        stringList.append("underdefined input");
+        setListViewText();
+    }
     else {
         currentRoom = nextRoom;
-        cout << currentRoom->longDescription() << endl;
+        clearListView();
+        QString description = QString::fromStdString(currentRoom->longDescription());
+        //cout << currentRoom->longDescription() << endl;
+        stringList.append(description);
+        setListViewText();
     }
 }
 
@@ -259,10 +280,50 @@ void MainWindow::on_okBtn_clicked()
 {
     QString input = ui->commandInput->toPlainText();
     std::string buffer = input.toLocal8Bit().constData();
+    if(buffer.compare("") != 0)
+    {
+        Command* command = parser.getCommand(buffer);
+            // Pass dereferenced command and check for end of game.
+        finished = processCommand(*command);
+            // Free the memory allocated by "parser.getCommand()"
+            //   with ("return new Command(...)")
+        delete command;
+        ui->commandInput->setText("");
+        if (finished)
+        {
+            close();
+        }
+    }
+}
+
+void MainWindow::on_upBtn_clicked()
+{
+    std::string buffer = "go north";
     Command* command = parser.getCommand(buffer);
-        // Pass dereferenced command and check for end of game.
     finished = processCommand(*command);
-        // Free the memory allocated by "parser.getCommand()"
-        //   with ("return new Command(...)")
+    delete command;
+}
+
+void MainWindow::on_rightBtn_clicked()
+{
+    std::string buffer = "go east";
+    Command* command = parser.getCommand(buffer);
+    finished = processCommand(*command);
+    delete command;
+}
+
+void MainWindow::on_downBtn_clicked()
+{
+    std::string buffer = "go south";
+    Command* command = parser.getCommand(buffer);
+    finished = processCommand(*command);
+    delete command;
+}
+
+void MainWindow::on_leftBtn_clicked()
+{
+    std::string buffer = "go west";
+    Command* command = parser.getCommand(buffer);
+    finished = processCommand(*command);
     delete command;
 }
