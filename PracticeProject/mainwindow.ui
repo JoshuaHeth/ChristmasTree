@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1074</width>
-    <height>485</height>
+    <width>1301</width>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,13 +21,22 @@
     <bool>false</bool>
    </property>
    <widget class="QFrame" name="centralMap">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
       <width>861</width>
-      <height>451</height>
+      <height>471</height>
      </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>ForbiddenCursor</cursorShape>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::WheelFocus</enum>
     </property>
     <property name="autoFillBackground">
      <bool>false</bool>
@@ -47,7 +56,7 @@
      <rect>
       <x>860</x>
       <y>220</y>
-      <width>171</width>
+      <width>401</width>
       <height>31</height>
      </rect>
     </property>
@@ -58,8 +67,8 @@
    <widget class="QPushButton" name="upBtn">
     <property name="geometry">
      <rect>
-      <x>930</x>
-      <y>310</y>
+      <x>1050</x>
+      <y>280</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -68,24 +77,11 @@
      <string>Up</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="leftBtn">
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>350</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Left</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="rightBtn">
     <property name="geometry">
      <rect>
-      <x>1000</x>
-      <y>350</y>
+      <x>1120</x>
+      <y>330</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -97,8 +93,8 @@
    <widget class="QPushButton" name="downBtn">
     <property name="geometry">
      <rect>
-      <x>930</x>
-      <y>390</y>
+      <x>1050</x>
+      <y>380</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -112,7 +108,7 @@
      <rect>
       <x>860</x>
       <y>0</y>
-      <width>211</width>
+      <width>441</width>
       <height>221</height>
      </rect>
     </property>
@@ -123,7 +119,7 @@
    <widget class="QPushButton" name="okBtn">
     <property name="geometry">
      <rect>
-      <x>1030</x>
+      <x>1260</x>
       <y>220</y>
       <width>41</width>
       <height>31</height>
@@ -133,13 +129,36 @@
      <string>OK</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="leftBtn">
+    <property name="geometry">
+     <rect>
+      <x>980</x>
+      <y>330</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Left</string>
+    </property>
+   </widget>
+   <zorder>centralMap</zorder>
+   <zorder>commandInput</zorder>
+   <zorder>upBtn</zorder>
+   <zorder>leftBtn</zorder>
+   <zorder>rightBtn</zorder>
+   <zorder>downBtn</zorder>
+   <zorder>textListView</zorder>
+   <zorder>okBtn</zorder>
+   <zorder>leftBtn</zorder>
+   <zorder>leftBtn</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1074</width>
+     <width>1301</width>
      <height>21</height>
     </rect>
    </property>

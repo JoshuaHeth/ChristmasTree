@@ -3,16 +3,21 @@
 #include <QtGui>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 using namespace std;
 #include <stdlib.h>
 #include <iostream>
 
+//inline method for clearing the QStringList used to display text to the UI TextListView
 inline void MainWindow::clearListView()
 {
     stringList.clear();
 }
 
+//Constructor
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -21,28 +26,40 @@ MainWindow::MainWindow(QWidget *parent) :
     createRooms();
 }
 
+//Destructor
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-
-int main(int argc, char *argv[]) {
+//Main method used to initialize the application, window, view, etc
+int main(int argc, char *argv[])
+{
+    //Create the application
     QApplication a(argc, argv);
+    //Create the MainWindow UI
     MainWindow *window = new MainWindow();
 
-    window->size();
-    window->show();
+    QGraphicsRectItem *rect = new QGraphicsRectItem(180, 180, 20, 20);
+    //rect->setRect(180,180, 20, 20);
+    rect->setBrush(* new QBrush(Qt::red));
 
-    window->play();
+    QGraphicsScene *scene = new QGraphicsScene();
+    //rect->setRect(300, 180, 20, 20);
+    scene->addWidget(window);
+    scene->addItem(rect);
+    QGraphicsView *view = new QGraphicsView(scene);
+
+    view->show();
+    view->size();
+   // window->size();
+    //window->show();
+    window->play(rect);
     return a.exec();
 }
 
-/*ZorkUL::ZorkUL() {
-    createRooms();
-}*/
-
-void MainWindow::createRooms()  {
+void MainWindow::createRooms()
+{
     Room *prison, *observation, *battle, *mainStairwell, *sickbay, *hallway, *cockpit;//, *secondaryStairwell, *riddle, *armoury;
 
     prison = new Room("Prison");
@@ -60,7 +77,7 @@ void MainWindow::createRooms()  {
     //riddle = new Room("Riddle Room");
     //armoury = new Room("Armoury");
 
-//                  (N, E, S, W)
+//                  (Up, Right, Down, Left)
     prison->setExits(NULL, observation, NULL, NULL);
     observation->setExits(NULL, battle, mainStairwell, prison);
     battle->setExits(NULL, NULL, hallway, observation);
@@ -71,6 +88,21 @@ void MainWindow::createRooms()  {
     //secondaryStairwell->setExits(mainStairwell, riddle, armoury, NULL);
     //riddle->setExits(NULL, NULL, NULL, secondaryStairwell);
     //armoury->setExits(secondaryStairwell, NULL, NULL, NULL);
+
+    //Prison - 		x(180) y(180)
+    prison->setCharacterPosition(180, 180);
+    //Observation - 		x(300) y(180)
+    observation->setCharacterPosition(300, 180);
+    //Battle - 		x(400) y(180)
+    battle->setCharacterPosition(400, 180);
+    //Main Stairwell - 	x(330) y(260)
+    mainStairwell->setCharacterPosition(330, 260);
+    //SickBay - 		x(300) y(400)
+    sickbay->setCharacterPosition(300, 400);
+    //Hallway -		x(450) y(280)
+    hallway->setCharacterPosition(450, 280);
+    //Cockpit - 		x(700) y(280)
+    cockpit->setCharacterPosition(700, 280);
 
     currentRoom = prison;
 
@@ -89,14 +121,14 @@ void MainWindow::createRooms()  {
 /**
  *  Main play routine.  Loops until end of play.
  */
-void MainWindow::play() {
+void MainWindow::play(QGraphicsRectItem *rectItem)
+{
+    rect = rectItem;
     model = new QStringListModel(this);
-    stringList.append("Welcome to the game!");
-    stringList.append("Type info for help.");
-    setListViewText();
+
 
     //stringList.clear();
-    //printWelcome();
+    printWelcome();
 
     // Enter the main command loop.  Here we repeatedly read commands and
     // execute them until the ZorkUL game is over.
@@ -124,10 +156,23 @@ void MainWindow::setListViewText(){
 }
 
 void MainWindow::printWelcome() {
-    cout << "start"<< endl;
-    cout << "info for help"<< endl;
-    cout << endl;
-    cout << currentRoom->longDescription() << endl;
+    /*QString qstr = "Trying to get home"
+                   "\nyadda yadda yadda,"
+                   "\nship gets attacked,"
+                   "\nyadda yadda yadda,"
+                   "\nneed to escape,"
+                   "\nyadda yadda yadda,"
+                   "\nfight the bad guys,"
+                   "\nyadda yadda yadda,"
+                   "\nrescue the princ....."
+                   "\nA princess on a sanitation rig?"
+                   "\nYeah right!";
+    stringList.append("Welcome to the game!");
+    stringList.append("Introduction");
+    stringList.append(qstr);*/
+    QString str = QString::fromStdString(currentRoom->longDescription());
+    stringList.append(str);
+    setListViewText();
 }
 
 /**
@@ -148,39 +193,35 @@ bool MainWindow::processCommand(Command command) {
     if (commandWord.compare("info") == 0)
         printHelp();
 
-    else if (commandWord.compare("map") == 0)
-        {
-            clearListView();
-            stringList.append("[prison] --- [observation] --- [battle]");
-            stringList.append("\t|\t|");
-            stringList.append("\t[stairwell] ---- [hallway] --- [cockpit]");
-            stringList.append("\t|");
-            stringList.append("\t[sickbay]");
-            setListViewText();
-        }
-
     else if (commandWord.compare("go") == 0)
         goRoom(command);
 
     else if (commandWord.compare("take") == 0)
     {
-        if (!command.hasSecondWord()) {
+        if (!command.hasSecondWord())
+        {
             clearListView();
-            //cout << "incomplete input"<< endl;
             stringList.append("incomplete input");
             setListViewText();
         }
         else
-         if (command.hasSecondWord()) {
-        cout << "you're trying to take " + command.getSecondWord() << endl;
-        int location = currentRoom->isItemInRoom(command.getSecondWord());
-        if (location  < 0 )
-            cout << "item is not in room" << endl;
-        else
-            cout << "item is in room" << endl;
-            cout << "index number " << + location << endl;
-            cout << endl;
-            cout << currentRoom->longDescription() << endl;
+        {
+             if (command.hasSecondWord())
+             {
+                cout << "you're trying to take " + command.getSecondWord() << endl;
+                int location = currentRoom->isItemInRoom(command.getSecondWord());
+                if (location  < 0 )
+                {
+                    cout << "item is not in room" << endl;
+                }
+                else
+                {
+                    cout << "item is in room" << endl;
+                    cout << "index number " << + location << endl;
+                    cout << endl;
+                    //cout << currentRoom->longDescription() << endl;
+                }
+            }
         }
     }
 
@@ -207,13 +248,15 @@ bool MainWindow::processCommand(Command command) {
         currentRoom = &randomRoom;
         QString qstr = QString::fromStdString(randomRoom.longDescription());
         stringList.append(qstr);
-        //cout << randomRoom.longDescription() << endl;
         setListViewText();
     }
 
     else if (commandWord.compare("quit") == 0) {
-        if (command.hasSecondWord())
-            cout << "overdefined input"<< endl;
+        if (command.hasSecondWord()){
+            clearListView();
+            stringList.append("overdefined input");
+            setListViewText();
+        }
         else
             return true; /**signal to quit*/
     }
@@ -262,7 +305,7 @@ void MainWindow::goRoom(Command command) {
     }
 }
 
-string MainWindow::go(string direction) {
+/*string MainWindow::go(string direction) {
     //Make the direction lowercase
     //transform(direction.begin(), direction.end(), direction.begin(),:: tolower);
     //Move to the next room
@@ -274,7 +317,7 @@ string MainWindow::go(string direction) {
         currentRoom = nextRoom;
         return currentRoom->longDescription();
     }
-}
+}*/
 
 void MainWindow::on_okBtn_clicked()
 {
@@ -298,32 +341,43 @@ void MainWindow::on_okBtn_clicked()
 
 void MainWindow::on_upBtn_clicked()
 {
-    std::string buffer = "go north";
-    Command* command = parser.getCommand(buffer);
-    finished = processCommand(*command);
-    delete command;
+    std::string buffer = "go up";
+    buttonCommand(buffer);
 }
 
 void MainWindow::on_rightBtn_clicked()
 {
-    std::string buffer = "go east";
-    Command* command = parser.getCommand(buffer);
-    finished = processCommand(*command);
-    delete command;
+    std::string buffer = "go right";
+    buttonCommand(buffer);
 }
 
 void MainWindow::on_downBtn_clicked()
 {
-    std::string buffer = "go south";
-    Command* command = parser.getCommand(buffer);
-    finished = processCommand(*command);
-    delete command;
+    std::string buffer = "go down";
+    buttonCommand(buffer);
 }
 
 void MainWindow::on_leftBtn_clicked()
 {
-    std::string buffer = "go west";
+    std::string buffer = "go left";
+    buttonCommand(buffer);
+}
+
+void MainWindow::buttonCommand(string buffer)
+{
     Command* command = parser.getCommand(buffer);
     finished = processCommand(*command);
     delete command;
+    positionCharacter();
+
+}
+
+void MainWindow::positionCharacter()
+{
+    vector<int> temp = currentRoom->getCharacterPosition();
+    //cout << temp.at(0) << endl;
+    //cout << temp.at(1) << endl;
+    int x = temp.at(0);
+    int y = temp.at(1);
+    rect->setRect(x, y, 20, 20);
 }

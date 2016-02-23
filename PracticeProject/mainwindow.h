@@ -5,6 +5,7 @@
 #include <QtGui>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QGraphicsRectItem>
 
 #include "Command.h"
 #include "Parser.h"
@@ -28,7 +29,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     ZorkUL();
-    void play();
+    void play(QGraphicsRectItem *rectItem);
     string go(string direction);
     //QString getName() const;
     //void setName(const QString & name);
@@ -51,6 +52,7 @@ private:
     Parser parser;
     Room *currentRoom;
     vector <Room> rooms;
+    QGraphicsRectItem *rect;
     bool finished;
     void createRooms();
     void printWelcome();
@@ -63,16 +65,8 @@ private:
     void setListViewText();
     void addToListView(QString s);
     void clearListView();
-
-    //QString getName() const
-    //{
-       //return ui->commandInput->text();
-    //}
-
-    //void setName(const QString & name)
-    //{
-       // ui->commandInput->setText(name);
-    //}
+    void buttonCommand(string s);
+    void positionCharacter();
 };
 
 #endif // MAINWINDOW_H

@@ -11,7 +11,7 @@ Command* Parser::getCommand(string buffer) {
     //string buffer;
 	vector<string> words;
 
-	cout << "> "; // print prompt
+    //cout << "> "; // print prompt
 
     //getline(cin, buffer, '\n');	// read a line from cin to "buffer"
 
