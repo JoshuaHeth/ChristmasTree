@@ -1,5 +1,6 @@
 #ifndef COMMAND_H_
 #define COMMAND_H_
+#define LOOP_STARTER 0
 
 #include <string>
 using namespace std;

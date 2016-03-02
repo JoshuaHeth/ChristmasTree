@@ -20,7 +20,8 @@ SOURCES +=\
     item.cpp \
     Parser.cpp \
     Room.cpp \
-    ZorkUL.cpp
+    door.cpp \
+    entry_interface.cpp
 
 HEADERS  += mainwindow.h \
     Character.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     item.h \
     Parser.h \
     Room.h \
-    ZorkUL.h
+    door.h \
+    entry_interface.h
 
 FORMS    += mainwindow.ui
 

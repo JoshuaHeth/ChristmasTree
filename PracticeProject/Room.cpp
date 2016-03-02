@@ -98,29 +98,113 @@ string Room::exitString() {
 	return returnString;
 }
 
+//need to pass pointer to current room
 Room* Room::nextRoom(string direction) {
 	map<string, Room*>::iterator next = exits.find(direction); //returns an iterator for the "pair"
 	if (next == exits.end())
-		return NULL; // if exits.end() was returned, there's no room in that direction.
-	return next->second; // If there is a room, remove the "second" (Room*)
-				// part of the "pair" (<string, Room*>) and return it.
+        return NULL; // if exits.end() was returned, there's no room in that direction.
+
+    //Check if door in that direction is locked, if so stop access.
+    else if (checkForDoor(direction) == true)
+    {
+     if(this->getDoor(direction).getLock()==true)
+        {
+            //cout << "Direction : " << direction << "\n" << endl;
+            cout << this->getDoor(direction).getDescription() << " is locked." << endl;
+            return NULL;
+        }
+    }
+
+    //this->setEntered(1);
+    return next->second; // If there is a room, remove the "second" (Room*)
+                // part of the "pair" (<string, Room*>) and return it.
 }
 
+Door Room::getDoor(string direction)
+{
+    int x = doorsInRoom.size();
+
+    for(int i = LOOP_STARTER;i<x;i++)
+    {
+     if(doorsInRoom[i].getDirection().compare(direction)==0)
+         return doorsInRoom[i];
+    }
+}
+
+
 void Room::addItem(Item *inItem) {
-    //cout <<endl;
-    //cout << "Just added" + inItem->getLongDescription();
     itemsInRoom.push_back(*inItem);
 }
 
+void Room::addDoor(Door *inDoor){
+    doorsInRoom.push_back(*inDoor);
+}
+
+
+int Room::unlockDoor(vector<Item> list)
+{
+    int sizeDoors = doorsInRoom.size();
+    int sizeItems = list.size();
+    string doorName, itemName;
+
+        for (int i = LOOP_STARTER; i<sizeDoors; i++)
+        {
+            if(doorsInRoom[i].getLock() == true)
+            {
+                doorName = doorsInRoom[i].getDescription()+"Keycard";
+                for(int j = LOOP_STARTER; j<sizeItems; j++)
+                    {
+                        itemName = list[j].getShortDescription();
+                        if(doorName.compare(itemName) == LOOP_STARTER)
+                        {
+                        /*If an item matched to a specific door
+                            then delete the door
+                              and stop all the loops.*/
+
+                         //doorsInRoom[i].setLock(false);
+                         doorsInRoom.erase(doorsInRoom.begin()+i);
+                            return (j);
+                        }
+
+                     }
+                cout <<"You don`t have the key!" << endl;
+                return (-1);
+            }
+        }
+
+        cout <<"All doors are unlocked!" << endl;
+        return (-1);
+
+}
+
+
+
+string Room::displayDoor()
+{
+    string tempString = "door(s) in room = ";
+    int sizeItems = (doorsInRoom.size());
+    if (sizeItems < 1) {
+        tempString = "\nNo doors in room";
+        }
+    else if (sizeItems > LOOP_STARTER) {
+       int x = (LOOP_STARTER);
+        for (int n = sizeItems; n > LOOP_STARTER; n--) {
+            tempString = "\n"+tempString + doorsInRoom[x].getDescription()+" : " ;
+            x++;
+            }
+        }
+    return tempString;
+}
+
 string Room::displayItem() {
-    string tempString = "\nItems in room = ";
+    string tempString = "items in room = ";
     int sizeItems = (itemsInRoom.size());
-    if (itemsInRoom.size() < 1) {
+    if (sizeItems < 1) {
         tempString = "\nNo items in room";
         }
-    else if (itemsInRoom.size() > 0) {
-       int x = (0);
-        for (int n = sizeItems; n > 0; n--) {
+    else if (sizeItems > LOOP_STARTER) {
+       int x = (LOOP_STARTER);
+        for (int n = sizeItems; n > LOOP_STARTER; n--) {
             tempString = tempString + itemsInRoom[x].getShortDescription() + "  " ;
             x++;
             }
@@ -128,22 +212,19 @@ string Room::displayItem() {
     return tempString;
     }
 
-int Room::numberOfItems() {
-    return itemsInRoom.size();
-}
 
 int Room::isItemInRoom(string inString)
 {
     int sizeItems = (itemsInRoom.size());
-    if (itemsInRoom.size() < 1) {
+    if (sizeItems < 1) {
         return false;
         }
-    else if (itemsInRoom.size() > 0) {
-       int x = (0);
-        for (int n = sizeItems; n > 0; n--) {
+    else if (sizeItems > LOOP_STARTER) {
+       int x = (LOOP_STARTER);
+        for (int n = sizeItems; n > LOOP_STARTER; n--) {
             // compare inString with short description
             int tempFlag = inString.compare( itemsInRoom[x].getShortDescription());
-            if (tempFlag == 0) {
+            if (tempFlag == LOOP_STARTER) {
                 itemsInRoom.erase(itemsInRoom.begin()+x);
                 return x;
             }
@@ -151,6 +232,41 @@ int Room::isItemInRoom(string inString)
             }
         }
     return -1;
+}
+
+Item Room::getItem(string command)
+{
+    int sizeItems = (itemsInRoom.size());
+
+       int x = (LOOP_STARTER);
+        for (int n = sizeItems; n > LOOP_STARTER; n--)
+        {
+            if(itemsInRoom[x].getShortDescription().compare(command)==LOOP_STARTER)
+                n = LOOP_STARTER;
+            else
+                x++;
+        }
+        return(itemsInRoom[x]);
+
+}
+
+bool Room::checkForDoor(string direction)
+{
+    int sizeItems = (doorsInRoom.size());
+
+     if (sizeItems > LOOP_STARTER)
+     {
+       int x = LOOP_STARTER;
+        for (int n = sizeItems; n > LOOP_STARTER; n--)
+        {
+            if(direction.compare(doorsInRoom[x].getDirection())==LOOP_STARTER)
+                return true;
+            else
+                x++;
+        }
+     }
+
+    return false;
 }
 
 vector<int> Room::getCharacterPosition()

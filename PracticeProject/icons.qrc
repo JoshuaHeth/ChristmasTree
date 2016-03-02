@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>mainLevel2.png</file>
+        <file>SecondLevel.png</file>
     </qresource>
 </RCC>

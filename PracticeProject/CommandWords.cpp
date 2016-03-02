@@ -12,7 +12,8 @@ CommandWords::CommandWords() {
 		validCommands.push_back("quit");
         validCommands.push_back("info");
 		validCommands.push_back("take");
-		validCommands.push_back("put");
+        validCommands.push_back("unlock");
+        validCommands.push_back("items");
         validCommands.push_back("teleport");
 	}
 }

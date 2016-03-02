@@ -1,16 +1,14 @@
-/*#include "Character.h"
+#include "Character.h"
 
-Characterx::Characterx(string description) {
-	this->description = description;
+Character::Character(string description) {
+    this->description = description;
 }
-void Characterx::addItem(Item &item) {
+
+void Character::addItems(Item item) {
     itemsInCharacter.push_back(item);
 }
-void Characterx::addItem(Item *item) {
-    itemsInCharacter.push_back(*item);
-    delete item;
-}
-string Characterx::longDescription()
+
+string Character::longDescription()
 {
   string ret = this->description;
   ret += "\n Item list:\n";
@@ -18,6 +16,70 @@ string Characterx::longDescription()
     ret += "\t"+ (*i).getLongDescription() + "\n";
   return ret;
 }
-*/
+
+bool Character::compareItems(string itemCheck)
+{
+  string ret;
+  int size = itemsInCharacter.size();
+
+  cout <<"Room: " << itemCheck << "\n";
+
+  if(size > LOOP_STARTER)
+  {
+    //Test to see if keycard matches door description.
+    for (vector<Item>::iterator i = itemsInCharacter.begin(); i != itemsInCharacter.end(); i++)
+    {
+     ret = (*i).getShortDescription();
+     cout << "Item : " << ret << endl;
+        {
+            if(ret.compare(itemCheck)==LOOP_STARTER)
+            {
+                itemsInCharacter.erase(i);
+                return false;               //false unlocks the objects (Door/Stairwell).
+            }
+        }
+    }
+  }
+  return true;
+
+}
+
+void Character::displayItems()
+{
+    int size = itemsInCharacter.size();
+    string ret;
+    cout << "Character items number: " << size << endl;
+    for (vector<Item>::iterator i = itemsInCharacter.begin(); i != itemsInCharacter.end(); i++)
+    {
+      ret = (*i).getShortDescription();
+      {
+          cout <<"\n"<< ret<< endl;
+      }
+    }
+}
+
+bool Character:: getItem(string itemDesc)
+{
+    string ret;
+    for (vector<Item>::iterator i = itemsInCharacter.begin(); i != itemsInCharacter.end(); i++)
+    {
+      ret = (*i).getShortDescription();
+
+          if(ret.compare(itemDesc)== 0)
+              return true;
+    }
+
+    return false;
+}
+
+vector<Item> Character:: getItems()
+{
+    return itemsInCharacter;
+}
+
+int Character:: itemListSize()
+{
+    return itemsInCharacter.size();
+}
 
 

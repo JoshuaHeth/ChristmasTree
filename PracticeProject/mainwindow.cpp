@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QtGui>
+
+/*#include <QtGui>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QGraphicsRectItem>
@@ -9,13 +10,7 @@
 
 using namespace std;
 #include <stdlib.h>
-#include <iostream>
-
-//inline method for clearing the QStringList used to display text to the UI TextListView
-inline void MainWindow::clearListView()
-{
-    stringList.clear();
-}
+#include <iostream>*/
 
 //Constructor
 MainWindow::MainWindow(QWidget *parent) :
@@ -23,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    //ui->centralMap->setStyleSheet("background-image: url(:/SecondLevel.png);");
     createRooms();
 }
 
@@ -55,27 +51,54 @@ int main(int argc, char *argv[])
    // window->size();
     //window->show();
     window->play(rect);
+
     return a.exec();
 }
 
 void MainWindow::createRooms()
 {
-    Room *prison, *observation, *battle, *mainStairwell, *sickbay, *hallway, *cockpit;//, *secondaryStairwell, *riddle, *armoury;
+    //Room *prison, *observation, *battle, *mainStairwell, *sickbay, *hallway, *cockpit;//, *secondaryStairwell, *riddle, *armoury;
+    testCharacter = new Character("Bob");
 
+    /*Create Doors***********************************************************************************************************************/
+    obsrvDoor = new Door("ObservationDoor",true,"right");
+    btlDoor = new Door ("BattleDoor", true, "right");
+    hallwayDoor = new Door ("HallwayDoor",true,"right");
+    stairs = new Door ("SecondaryStairwellDoor", true, "left");
+    armDoor = new Door("ArmouryDoor",true,"down");
+
+    // Create rooms
     prison = new Room("Prison");
-        //a->addItem(new Item("x", 1, 11));
-        //a->addItem(new Item("y", 2, 22));
+    prison->addItem(new Item("ObservationDoorKeycard"));
+    prison->addDoor(obsrvDoor);
+
     observation = new Room("Observation Room");
-        //b->addItem(new Item("xx", 3, 33));
-        //b->addItem(new Item("yy", 4, 44));
+    observation->addDoor(btlDoor);
+    observation->addItem(new Item("BattleDoorKeycard"));
+
     battle = new Room("Battle");
+
     mainStairwell = new Room("Stairwell Level 1");
+    mainStairwell->addDoor(stairs);
+    mainStairwell->addDoor(hallwayDoor);
+
     sickbay = new Room("SickBay");
+    sickbay->addItem(new Item("Health Pack"));
+    sickbay->addItem(new Item("MainStairwellDoorKeycard"));
+
     hallway = new Room("Hallway of Something");
+    hallway->addDoor(stairs);
+
     cockpit = new Room("Cockpit");
-    //secondaryStairwell = new Room("Stairwell Level 2");
-    //riddle = new Room("Riddle Room");
-    //armoury = new Room("Armoury");
+
+    secondaryStairwell = new Room("Stairwell Level 2");
+    secondaryStairwell->addDoor(armDoor);
+
+    riddle = new Room("Riddle Room");
+    //riddle->addToList(new Item("ArmouryDoorKeycard"));//ADD AFTER RIDDLE IS COMPLETED
+
+    armoury = new Room("Armoury");
+    armoury->addItem(new Item("Gun"));
 
 //                  (Up, Right, Down, Left)
     prison->setExits(NULL, observation, NULL, NULL);
@@ -85,9 +108,9 @@ void MainWindow::createRooms()
     sickbay->setExits(mainStairwell, NULL, NULL, NULL);
     hallway->setExits(battle, cockpit, NULL, mainStairwell);
     cockpit->setExits(NULL, NULL, NULL, hallway);
-    //secondaryStairwell->setExits(mainStairwell, riddle, armoury, NULL);
-    //riddle->setExits(NULL, NULL, NULL, secondaryStairwell);
-    //armoury->setExits(secondaryStairwell, NULL, NULL, NULL);
+    secondaryStairwell->setExits(mainStairwell, riddle, armoury, NULL);
+    riddle->setExits(NULL, NULL, NULL, secondaryStairwell);
+    armoury->setExits(secondaryStairwell, NULL, NULL, NULL);
 
     //Prison - 		x(180) y(180)
     prison->setCharacterPosition(180, 180);
@@ -103,6 +126,12 @@ void MainWindow::createRooms()
     hallway->setCharacterPosition(450, 280);
     //Cockpit - 		x(700) y(280)
     cockpit->setCharacterPosition(700, 280);
+    //Secondary Stariwell - 		x(320) y(190)
+    secondaryStairwell->setCharacterPosition(320, 190);
+    //Riddle Room -			x(520) y(190)
+    riddle->setCharacterPosition(520, 190);
+    //Armoury -			x(350) y(360)
+    armoury->setCharacterPosition(350, 360);
 
     currentRoom = prison;
 
@@ -113,9 +142,9 @@ void MainWindow::createRooms()
     rooms.push_back(*sickbay);
     rooms.push_back(*hallway);
     rooms.push_back(*cockpit);
-    //rooms.push_back(*secondaryStairwell);
-    //rooms.push_back(*riddle);
-    //rooms.push_back(*armoury);
+    rooms.push_back(*secondaryStairwell);
+    rooms.push_back(*riddle);
+    rooms.push_back(*armoury);
 }
 
 /**
@@ -204,24 +233,22 @@ bool MainWindow::processCommand(Command command) {
             stringList.append("incomplete input");
             setListViewText();
         }
+        if (!command.hasSecondWord()) {
+            clearListView();
+            stringList.append("incomplete input");
+            setListViewText();
+        }
         else
-        {
-             if (command.hasSecondWord())
-             {
-                cout << "you're trying to take " + command.getSecondWord() << endl;
-                int location = currentRoom->isItemInRoom(command.getSecondWord());
-                if (location  < 0 )
-                {
-                    cout << "item is not in room" << endl;
-                }
-                else
-                {
-                    cout << "item is in room" << endl;
-                    cout << "index number " << + location << endl;
-                    cout << endl;
-                    //cout << currentRoom->longDescription() << endl;
-                }
-            }
+         if (command.hasSecondWord()) {
+            cout << "you're trying to take " + command.getSecondWord() << endl;
+        int location = currentRoom->isItemInRoom(command.getSecondWord());
+        if (location  < 0 )
+            cout << "item is not in room" << endl;
+        else
+            cout << "item is in room" << endl;
+            testCharacter->addItems(currentRoom->getItem(command.getSecondWord()));
+            cout << endl;
+            cout << currentRoom->longDescription() << endl;
         }
     }
 
@@ -249,6 +276,15 @@ bool MainWindow::processCommand(Command command) {
         QString qstr = QString::fromStdString(randomRoom.longDescription());
         stringList.append(qstr);
         setListViewText();
+    }
+    else if (commandWord.compare("unlock") == 0)
+    {
+        openLock();
+    }
+
+
+    else if (commandWord.compare("items") == 0) {
+        displayCharacterItems();
     }
 
     else if (commandWord.compare("quit") == 0) {
@@ -294,6 +330,14 @@ void MainWindow::goRoom(Command command) {
         //clearListView();
         stringList.append("underdefined input");
         setListViewText();
+    }
+    else if (currentRoom == battle)
+    {
+        bool fight = testCharacter->getItem("Gun");
+        if (fight == false)
+            currentRoom = sickbay;
+            //cout << ".....What happened? Why am I in sickbay ? ...uuggghhhh\n\n" << endl;
+           // cout << currentRoom->longDescription() << endl;
     }
     else {
         currentRoom = nextRoom;
@@ -380,4 +424,21 @@ void MainWindow::positionCharacter()
     int x = temp.at(0);
     int y = temp.at(1);
     rect->setRect(x, y, 20, 20);
+}
+
+void MainWindow::openLock()
+{
+    if(testCharacter->itemListSize() > 0)
+    {
+        if(currentRoom->unlockDoor(testCharacter->getItems())== 0)
+            cout << "Door has been unlocked.\n" << endl;
+    }
+
+    else
+          cout <<"You don`t have the key!" << endl;
+}
+
+void MainWindow::displayCharacterItems()
+{
+    testCharacter->displayItems();
 }

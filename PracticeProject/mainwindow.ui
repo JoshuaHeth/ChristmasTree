@@ -142,16 +142,6 @@
      <string>Left</string>
     </property>
    </widget>
-   <zorder>centralMap</zorder>
-   <zorder>commandInput</zorder>
-   <zorder>upBtn</zorder>
-   <zorder>leftBtn</zorder>
-   <zorder>rightBtn</zorder>
-   <zorder>downBtn</zorder>
-   <zorder>textListView</zorder>
-   <zorder>okBtn</zorder>
-   <zorder>leftBtn</zorder>
-   <zorder>leftBtn</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

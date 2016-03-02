@@ -5,17 +5,24 @@
 #include <QtGui>
 #include <QGridLayout>
 #include <QPushButton>
-#include <QGraphicsRectItem>
 
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+
+#include "Character.h"
 #include "Command.h"
 #include "Parser.h"
 #include "Room.h"
 #include "item.h"
+#include "door.h"
 #include <iostream>
 #include <string>
 #include <stdlib.h>
+
 using namespace std;
 using std::vector;
+class Character;
 
 namespace Ui {
 class MainWindow;
@@ -31,8 +38,6 @@ public:
     ZorkUL();
     void play(QGraphicsRectItem *rectItem);
     string go(string direction);
-    //QString getName() const;
-    //void setName(const QString & name);
 
 private slots:
     void on_okBtn_clicked();
@@ -53,6 +58,10 @@ private:
     Room *currentRoom;
     vector <Room> rooms;
     QGraphicsRectItem *rect;
+    Room *prison, *observation, *battle, *mainStairwell, *hallway, *cockpit, *sickbay, *riddle, *secondaryStairwell, *armoury;
+    Door *obsrvDoor, *btlDoor, *hallwayDoor,*armDoor, *stairs ;
+    Character *testCharacter;
+
     bool finished;
     void createRooms();
     void printWelcome();
@@ -64,9 +73,16 @@ private:
     void teleport();
     void setListViewText();
     void addToListView(QString s);
-    void clearListView();
     void buttonCommand(string s);
     void positionCharacter();
+    void openLock();
+    void checkLock();
+    void displayCharacterItems();
+
+    //inline method for clearing the QStringList used to display text to the UI TextListView
+    inline void clearListView(){
+        stringList.clear();
+    }
 };
 
 #endif // MAINWINDOW_H
