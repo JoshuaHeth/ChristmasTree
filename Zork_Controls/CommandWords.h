@@ -14,7 +14,7 @@ private:
 
 public:
 	CommandWords();
-    //~CommandWords();
+    ~CommandWords();
 
 	bool isCommand(string aString);
     vector<string> showAll();

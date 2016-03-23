@@ -8,7 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    createRooms();
+    gameSetup();
+
 }
 
 //Destructor
@@ -27,7 +28,8 @@ int main(int argc, char *argv[])
 
     QGraphicsRectItem *rect = new QGraphicsRectItem(180, 180, 20, 20);
     //rect->setRect(180,180, 20, 20);
-    rect->setBrush(* new QBrush(Qt::red));
+    rect->setBrush(* new QBrush(Qt::green));
+
 
     QGraphicsScene *scene = new QGraphicsScene();
     //rect->setRect(300, 180, 20, 20);
@@ -42,22 +44,81 @@ int main(int argc, char *argv[])
     return a.exec();
 }
 
-void MainWindow::createRooms()
+void MainWindow::gameSetup()
+{
+    testHero = new Hero("Hero",100);
+    testVillian = new Character("Villian", 300.0);
+    displayHealth(testHero);
+
+        //UI Attributes Setup
+        uiSetup();
+
+        //Create Doors
+        doorSetup();
+
+        //Create Rooms
+        roomSetup();
+
+        remainder = TIME_LEFT;
+        timer = new QTimer();
+        timer->setInterval(1000);
+        timer->setSingleShot(false);
+        connect(timer,SIGNAL(timeout()),this,SLOT(clock()));
+
+
+}
+
+void MainWindow::clock()
+{
+    remainder = remainder - 1;
+    //remainder = ((remainder % (1000*60*60))%(1000*60)) / 1000;
+    QString qstr = QString::fromStdString(valueToString(remainder));
+    ui->lbl_Clock->setText(qstr);
+
+
+    if(remainder <= 0)
+    {
+        gameSetup();
+        positionCharacter();
+    }
+
+}
+
+
+void MainWindow:: uiSetup()
+{
+    ui->btn_ObservationDoor->setIcon(QIcon(":/closed_door.png"));
+    ui->btn_ObservationDoor->setEnabled(true);
+    ui->btn_ObservationDoorKeycard->setVisible(true);
+    ui->btn_BattleDoor->setIcon(QIcon(":/closed_door.png"));
+    ui->btn_BattleDoor->setEnabled(true);
+    ui->btn_BattleDoorKeycard->setVisible(true);
+    ui->btn_Villian->setVisible(false);
+    ui->btn_HealthPack->setVisible(false);
+    ui->btn_Gun->setVisible(false);
+    ui->lbl_Villian_2->setVisible(false);
+    ui->lbl_Health_Villian->setVisible(false);
+    ui->lbl_Character_Health_Villian->setVisible(false);
+    //ui->btn_Riddle->setVisible(false);
+    ui->lbl_Clock->setStyleSheet("QLabel{color : blue;}");
+}
+
+
+/*Create Doors***********************************************************************************************************************/
+void MainWindow:: doorSetup()
 {
 
-    testCharacter = new Character("Bob",100);
-    displayHealth();
-    ui->lbl_Villian->setVisible(false);
-    ui->btn_HealthPack->setVisible(false);
-
-    /*Create Doors***********************************************************************************************************************/
     obsrvDoor = new Door("ObservationDoor",true,"right");
     btlDoor = new Door ("BattleDoor", true, "right");
     hallwayDoor = new Door ("HallwayDoor",true,"right");
-    //stairs = new Door ("Stairwell_Level_1Door", true, "left");
-    //armDoor = new Door("ArmouryDoor",true,"down");
+    cockpitDoor = new Door("CockpitDoor", true, "right");
+}
 
-    // Create rooms
+
+// Create rooms********************************************************************************************************************/
+void MainWindow:: roomSetup()
+{
+
     prison = new Room("Prison",0);
     prison->addItem(new Item("ObservationDoorKeycard"));
     prison->addDoor(obsrvDoor);
@@ -69,38 +130,28 @@ void MainWindow::createRooms()
     battle = new Room("Battle",0);
 
     mainStairwell = new Room("Stairwell_Level_1",0);
-    //mainStairwell->addDoor(stairs);
     mainStairwell->addDoor(hallwayDoor);
 
     sickbay = new Room("SickBay",0);
     sickbay->addItem(new Item("Health_Pack"));
     sickbay->addItem(new Item("BattleDoorKeycard"));
+    sickbay->addItem(new Item("Gun"));
 
     hallway = new Room("Hallway_of_Something",0);
-    //hallway->addDoor(stairs);
+    hallway->addDoor(cockpitDoor);
 
     cockpit = new Room("Cockpit",0);
 
-    /*secondaryStairwell = new Room("Stairwell_Level_2",0);
-    secondaryStairwell->addDoor(armDoor);
-
-    riddle = new Room("Riddle_Room",0);
-    //riddle->addToList(new Item("ArmouryDoorKeycard"));//ADD AFTER RIDDLE IS COMPLETED
-
-    armoury = new Room("Armoury",0);
-    armoury->addItem(new Item("Gun"));*/
 
 //                  (Up, Right, Down, Left)
     prison->setExits(NULL, observation, NULL, NULL);
     observation->setExits(NULL, battle, mainStairwell, prison);
     battle->setExits(NULL, NULL, hallway, observation);
-    mainStairwell->setExits(observation, hallway, sickbay, NULL);//, secondaryStairwell); //secondaryStairwell);
+    mainStairwell->setExits(observation, hallway, sickbay, NULL);
     sickbay->setExits(mainStairwell, NULL, NULL, NULL);
     hallway->setExits(battle, cockpit, NULL, mainStairwell);
     cockpit->setExits(NULL, NULL, NULL, hallway);
-    //secondaryStairwell->setExits(NULL, riddle, armoury, mainStairwell);
-    //riddle->setExits(NULL, NULL, NULL, secondaryStairwell);
-    //armoury->setExits(secondaryStairwell, NULL, NULL, NULL);
+
 
     //Prison - 		x(180) y(180)
     prison->setCharacterPosition(180, 180);
@@ -116,14 +167,9 @@ void MainWindow::createRooms()
     hallway->setCharacterPosition(450, 280);
     //Cockpit - 		x(700) y(280)
     cockpit->setCharacterPosition(700, 280);
-    //Secondary Stariwell - 		x(320) y(190)
-   /* secondaryStairwell->setCharacterPosition(320, 190);
-    //Riddle Room -			x(520) y(190)
-    riddle->setCharacterPosition(520, 190);
-    //Armoury -			x(350) y(360)
-    armoury->setCharacterPosition(350, 360);*/
 
     currentRoom = prison;
+    //positionCharacter();
 
     rooms.push_back(prison);
     rooms.push_back(observation);
@@ -132,10 +178,9 @@ void MainWindow::createRooms()
     rooms.push_back(sickbay);
     rooms.push_back(hallway);
     rooms.push_back(cockpit);
-    /*rooms.push_back(*secondaryStairwell);
-    rooms.push_back(*riddle);
-    rooms.push_back(*armoury);*/
 }
+
+
 
 /**
  *  Main play routine.  Loops until end of play.
@@ -144,29 +189,7 @@ void MainWindow::play(QGraphicsRectItem *rectItem)
 {
     rect = rectItem;
     model = new QStringListModel(this);
-
-
-    //stringList.clear();
     printWelcome();
-
-    // Enter the main command loop.  Here we repeatedly read commands and
-    // execute them until the ZorkUL game is over.
-    //bool finished = false;
-    //while (!finished)
-    //{
-        // Create pointer to command and give it a command.
-            //QString buffer;
-            //istream::getline(ui->commandInput->toPlainText(), buffer, '\n');
-            //std::string current_locale_text = buffer.toLocal8Bit().constData();
-        //Command* command = parser.getCommand();
-            // Pass dereferenced command and check for end of game.
-        //finished = processCommand(*command);
-            // Free the memory allocated by "parser.getCommand()"
-            //   with ("return new Command(...)")
-        //delete command;
-    //}
-    //cout << endl;
-    //cout << "end" << endl;
 }
 
 void MainWindow::setListViewText(){
@@ -238,7 +261,6 @@ bool MainWindow::processCommand(Command command) {
 }
 /** COMMANDS **/
 void MainWindow::printHelp() {
-    //cout << "valid inputs are; " << endl;
     clearListView();
     stringList.append("Valid inputs are:");
     vector<string> commandWords = parser.showCommands();
@@ -265,48 +287,12 @@ void MainWindow::goRoom(Command command) {
     Room* nextRoom = currentRoom->nextRoom(direction);
 
     if (nextRoom == NULL){
-        //clearListView();
         stringList.append("Where you going???");
         setListViewText();
-    }
-    else if (currentRoom == battle)
-    {
-        ui->lbl_Villian->setVisible(true);
-        bool fight = testCharacter->getItem("Gun");
-        if (fight == false || testCharacter->getHealth() < 250)
-        {
-            currentRoom = sickbay;
-            testCharacter->setHealth(-200);
-            displayHealth();
-            QString description1 = QString::fromStdString(currentRoom->longDescription());
-            stringList.append(description1);
-            setListViewText();
-        }
-
-        else
-            stringList.append("Enemy has been shot down and freedom is within reach");
-            setListViewText();
-
     }
 
     else
     {
-        /*Change to downstairs view and move room.
-        if(currentRoom == secondaryStairwell)
-        {
-                ui->centralMap->setStyleSheet("background-image: url(:/SecondLevel.png);");
-                changeLevelDisplay();
-        }
-
-
-        //Change to upstairs view and move room.
-        if(currentRoom == secondaryStairwell && nextRoom == mainStairwell)
-        {
-            changeLevelDisplay();
-            ui->centralMap->setStyleSheet("background-image: url(:/mainLevel2.png);");
-        }*/
-
-
         //Move room.
         currentRoom = nextRoom;
         clearListView();
@@ -314,45 +300,34 @@ void MainWindow::goRoom(Command command) {
         stringList.append(description2);
         setListViewText();
 
-        if(currentRoom == observation && currentRoom->getFlag()==0)
-            delete ui->btn_ObservationDoorKeycard;
-
-        if(currentRoom == battle && currentRoom->getFlag()==0)
-            delete ui->btn_BattleDoorKeycard;
-
         if(currentRoom == sickbay)
         {
-            //sickbay->addItem(new Item("Health_Pack"));
             ui->btn_HealthPack->setVisible(true);
         }
 
+        //Text display change
         if(currentRoom->getFlag() == 0)
             currentRoom->setFlag(1);
 
+        if (currentRoom == battle && currentRoom->getFlag() != 2)
+            {
+                ui->btn_Villian->setVisible(true);
+                ui->lbl_Villian_2->setVisible(true);
+                ui->lbl_Health_Villian->setVisible(true);
+                ui->lbl_Character_Health_Villian->setVisible(true);
+                displayHealth(testVillian);
+            }
 
-
-        /*Delete buttons when used.
-        if(currentRoom == observation)
-            delete ui->btn_ObservationDoorKeycard;*/
+        if(currentRoom == cockpit)
+        {
+            timer->stop();
+        }
 
 
 
     }
 }
 
-/*string MainWindow::go(string direction) {
-    //Make the direction lowercase
-    //transform(direction.begin(), direction.end(), direction.begin(),:: tolower);
-    //Move to the next room
-    Room* nextRoom = currentRoom->nextRoom(direction);
-    if (nextRoom == NULL)
-        return("direction null");
-    else
-    {
-        currentRoom = nextRoom;
-        return currentRoom->longDescription();
-    }
-}*/
 
 void MainWindow::on_okBtn_clicked()
 {
@@ -410,8 +385,6 @@ void MainWindow::buttonCommand(string buffer)
 void MainWindow::positionCharacter()
 {
     vector<int> temp = currentRoom->getCharacterPosition();
-    //cout << temp.at(0) << endl;
-    //cout << temp.at(1) << endl;
     int x = temp.at(0);
     int y = temp.at(1);
     rect->setRect(x, y, 20, 20);
@@ -422,7 +395,7 @@ void MainWindow::positionCharacter()
 
 void MainWindow::on_btn_Items_clicked()
 {
-    QString qstr1 = QString::fromStdString(testCharacter->displayItems());
+    QString qstr1 = QString::fromStdString(testHero->displayItems());
     stringList.append(qstr1);
     setListViewText();
 }
@@ -430,165 +403,48 @@ void MainWindow::on_btn_Items_clicked()
 
 void MainWindow::on_btn_ObservationDoorKeycard_clicked()
 {
-    string item = "ObservationDoorKeycard";
-    int itemInRoom = currentRoom->isItemInRoom(item);
+    timer->start();
+    inventory = addItems("ObservationDoorKeycard");
 
-       if (false == itemInRoom )
-       {
-           stringList.append("\nItem is not in room");
-           setListViewText();
-       }
-       else
-       {
-           stringList.append("\nItem is in room");
-           testCharacter->addItems(currentRoom->getItem(item));
-           stringList.append("You have taken the ");
-           QString qstr1 = QString::fromStdString(item);
-           stringList.append(qstr1);
-           setListViewText();
-           ui->btn_ObservationDoorKeycard->setVisible(false);
+    if(inventory != 0)
+    ui->btn_ObservationDoorKeycard->setVisible(false);
 
-       }
+
 }
 
-void MainWindow::on_btn_MainStairwellDoorKeycard_clicked()
-{
-    string item = "Stairwell_Level_1DoorKeycard";
-    int itemInRoom = currentRoom->isItemInRoom(item);
-
-       if (false == itemInRoom )
-       {
-           stringList.append("\nItem is not in room");
-           setListViewText();
-       }
-       else
-       {
-           stringList.append("\nItem is in room");
-           testCharacter->addItems(currentRoom->getItem(item));
-           stringList.append("You have taken the ");
-           QString qstr1 = QString::fromStdString(item);
-           stringList.append(qstr1);
-           setListViewText();
-           ui->btn_MainStairwellDoorKeycard->setVisible(false);
-
-       }
-}
 
 void MainWindow::on_btn_BattleDoorKeycard_clicked()
 {
-    string item = "BattleDoorKeycard";
-    int itemInRoom = currentRoom->isItemInRoom(item);
 
-       if (false == itemInRoom)
-       {
-           stringList.append("\nItem is not in room");
-           setListViewText();
-       }
-       else
-       {
-           stringList.append("\nItem is in room");
-           testCharacter->addItems(currentRoom->getItem(item));
-           stringList.append("You have taken the ");
-           QString qstr1 = QString::fromStdString(item);
-           stringList.append(qstr1);
-           setListViewText();
-           ui->btn_BattleDoorKeycard->setVisible(false);
-           //delete ui->btn_BattleDoorKeycard;
-       }
+    inventory = addItems("BattleDoorKeycard");
+
+    if(inventory != 0)
+    ui->btn_BattleDoorKeycard->setVisible(false);
+
 }
 
 void MainWindow::on_btn_ObservationDoor_pressed()
 {
-    if(testCharacter->itemListSize() > 0)
-    {
-        //string doorLock = (currentRoom->unlockDoor(testCharacter->getItems()));
-        string doorLock = (currentRoom->unlockDoor(testCharacter));
-                if(!(doorLock.compare("You don`t have the key!")==0)&&!(doorLock.compare("All doors are unlocked!")==0))
-                {
-                    stringList.append("Door has been unlocked.\n");
-                    QString description = QString::fromStdString(doorLock);
-                    stringList.append(description);
-                    setListViewText();
-                    ui->btn_ObservationDoor->setIcon(QIcon(":/opened_door.png"));
-                }
+   int key = openDoor();
 
-                else
-                {
-                    QString description = QString::fromStdString(doorLock);
-                    stringList.append(description);
-                    setListViewText();
-                }
-    }
-
-    else
-    {
-          stringList.append("You don`t have the key!");
-          setListViewText();
-    }
+   if(key == 0)
+   {
+       ui->btn_ObservationDoor->setIcon(QIcon(":/opened_door.png"));
+       ui->btn_ObservationDoor->setEnabled(false);
+   }
 }
 
 
 void MainWindow::on_btn_BattleDoor_pressed()
 {
-    if(testCharacter->itemListSize() > 0)
-    {
-       // string doorLock = (currentRoom->unlockDoor(testCharacter->getItems()));
-        string doorLock = (currentRoom->unlockDoor(testCharacter));
-                if(!(doorLock.compare("You don`t have the key!")==0)&&!(doorLock.compare("All doors are unlocked!")==0))
-                {
-                    stringList.append("Door has been unlocked.\n");
-                    QString description = QString::fromStdString(doorLock);
-                    stringList.append(description);
-                    setListViewText();
-                    ui->btn_BattleDoor->setIcon(QIcon(":/opened_door.png"));
-                }
+    int key = openDoor();
 
-                else
-                {
-                    QString description = QString::fromStdString(doorLock);
-                    stringList.append(description);
-                    setListViewText();
-                }
-    }
-
-    else
+    if(key == 0)
     {
-          stringList.append("You don`t have the key!");
-          setListViewText();
+        ui->btn_BattleDoor->setIcon(QIcon(":/opened_door.png"));
+        ui->btn_BattleDoor->setEnabled(false);
     }
 }
-
-
-void MainWindow::on_btn_StairwellLevel1_pressed()
-{
-    if(testCharacter->itemListSize() > 0)
-    {
-        string doorLock = (currentRoom->unlockDoor(testCharacter));
-                if(!(doorLock.compare("You don`t have the key!")==0)&&!(doorLock.compare("All doors are unlocked!")==0))
-                {
-                    stringList.append("Stairs has been unlocked.\n");
-                    QString description = QString::fromStdString(doorLock);
-                    stringList.append(description);
-                    setListViewText();
-                    ui->btn_StairwellLevel1->setIcon(QIcon(":/stairs_open.png"));
-                    //ui->centralMap->setStyleSheet("background-image: url(:/SecondLevel.png);");
-                }
-
-                else
-                {
-                    QString description = QString::fromStdString(doorLock);
-                    stringList.append(description);
-                    setListViewText();
-                }
-    }
-
-    else
-    {
-          stringList.append("You don`t have the key!");
-          setListViewText();
-    }
-}
-
 
 
 void MainWindow::on_btn_HealthPack_clicked()
@@ -603,42 +459,161 @@ void MainWindow::on_btn_HealthPack_clicked()
        }
        else
        {
-            testCharacter->setHealth(250);
+            testHero->setHealth(250);
             ui->btn_HealthPack->setVisible(false);
-            displayHealth();
+            displayHealth(testHero);
        }
 }
 
-void MainWindow::displayHealth()
+void MainWindow::displayHealth(Character* c)
 {
-    string hlth = valueToString(testCharacter->getHealth());
+    string hlth = valueToString(c->getHealth());
     QString qstr = QString::fromStdString(hlth);
-    ui->lbl_Health->setText(qstr);
+
+    if(c->getDescription()=="Hero")
+        ui->lbl_Health->setText(qstr);
+
+    else
+        ui->lbl_Health_Villian->setText(qstr);
 }
 
-/*void MainWindow::changeLevelDisplay()
+
+
+void MainWindow::on_btn_Gun_clicked()
 {
-    btn_List = ui->centralMap->findChildren<QPushButton *>();
-    lbl_List = ui->centralMap->findChildren<QLabel *>();
+    inventory = addItems("Gun");
 
-    foreach(QPushButton *l, btn_List)
+    if(inventory != 0)
+    ui->btn_Gun->setVisible(false);
+}
+
+int MainWindow::addItems(string item)
+{
+    int itemInRoom = currentRoom->isItemInRoom(item);
+
+       if (false == itemInRoom)
+       {
+           stringList.append("\nItem is not in room");
+           setListViewText();
+           return 0;
+       }
+
+           stringList.append("\nItem is in room");
+           testHero->addItems(currentRoom->getItem(item));
+           stringList.append("You have taken the ");
+           QString qstr1 = QString::fromStdString(item);
+           stringList.append(qstr1);
+           setListViewText();
+           return 1;
+
+}
+
+int MainWindow::openDoor()
+{
+    if(testHero->itemListSize() > 0)
     {
-      if(&l->isVisible == false)
-          l->setVisible(true);
+        string doorLock = (currentRoom->unlockDoor(testHero));
+                if(!(doorLock.compare("You don`t have the key!")==0)&&!(doorLock.compare("All doors are unlocked!")==0))
+                {
+                    stringList.append("Door has been unlocked.\n");
+                    QString description = QString::fromStdString(doorLock);
+                    stringList.append(description);
+                    setListViewText();
+                    return 0;
 
-      else
-          l->setVisible(false);
+                }
+
+                else
+                {
+                    QString description = QString::fromStdString(doorLock);
+                    stringList.append(description);
+                    setListViewText();
+                    return 1;
+                }
     }
 
-    foreach(QLabel *l, lbl_List)
+    else
     {
-      if(&l->isVisible == false)
-          l->setVisible(true);
-
-      else
-          l->setVisible(false);
+          stringList.append("You don`t have the key!");
+          setListViewText();
+          return 1;
     }
-}*/
+}
+
+void MainWindow::on_btn_Riddle_clicked()
+{
+
+
+}
+
+void MainWindow::on_btn_Villian_pressed()
+{
+    if(currentRoom == battle)
+    {
+        bool fight = testHero->getItem("Gun");
+
+        /*Cast Hero to Character type to execute Operator overload -.
+        Character *score = dynamic_cast<Character*>(testHero);
+        Character *x = score-testVillian;
+        cout<<x->getHealth()<<endl;
+        //cout<<"Hero:"<<score->getHealth()<<"||"<<x<<"||"<<testVillian->getHealth()<<":Villian\n"<<endl;
+        if (fight == false || x->getHealth()>0)//score-testVillian > 0)//testHero->getHealth() < 250)*/
+
+
+        if (fight == false || testHero->getHealth() < 250)
+        {
+            currentRoom = sickbay;
+            positionCharacter();
+            testHero->setHealth(-200);
+            displayHealth(testHero);
+            QString description1 = QString::fromStdString(currentRoom->longDescription());
+            stringList.append(description1);
+            setListViewText();
+            ui->btn_HealthPack->setVisible(true);
 
 
 
+            if(sickbay->getFlag() == 1)
+            {
+                ui->btn_Gun->setVisible(true);
+                sickbay->setFlag(2);
+            }
+        }
+
+        else
+         {
+
+            stringList.append("Enemy has been shot down and freedom is within reach");
+            ui->btn_Gun->setVisible(false);
+            ui->lbl_Villian_2->setVisible(false);
+            ui->lbl_Health_Villian->setVisible(false);
+            ui->lbl_Character_Health_Villian->setVisible(false);
+            ui->btn_Villian->setVisible(false);
+            ui->btn_Riddle->setVisible(true);
+
+            setListViewText();
+            currentRoom->setFlag(2);
+        }
+    }
+    else
+    {
+       stringList.append("Enemy is out of reach.");
+        setListViewText();
+    }
+
+}
+
+
+//Quit Program
+void MainWindow::on_btn_Quit_pressed()
+{
+    QApplication::quit();
+}
+
+
+
+void MainWindow::on_btn_Reset_pressed()
+{
+    gameSetup();
+    positionCharacter();
+}

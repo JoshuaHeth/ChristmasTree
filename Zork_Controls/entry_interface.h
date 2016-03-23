@@ -13,8 +13,6 @@ public:
 
     virtual void setLock(bool key) = 0;
     virtual bool getLock() = 0;
-
-    //virtual inline ~entry_interface () = 0;
 };
 
 #endif // ENTRY_INTERFACE_H

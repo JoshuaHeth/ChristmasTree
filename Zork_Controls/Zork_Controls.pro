@@ -22,7 +22,8 @@ SOURCES += \
     item.cpp \
     mainwindow.cpp \
     Parser.cpp \
-    Room.cpp
+    Room.cpp \
+    hero.cpp
 
 
 HEADERS  += \
@@ -34,7 +35,8 @@ HEADERS  += \
     item.h \
     mainwindow.h \
     Parser.h \
-    Room.h
+    Room.h \
+    hero.h
 
 FORMS    += \
     mainwindow.ui
