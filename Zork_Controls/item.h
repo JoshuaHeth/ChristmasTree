@@ -11,19 +11,27 @@ private:
 	string description;
 	string longDescription;
     int value;
-	bool weaponCheck;
 
 public:
-    //Item (string description, int inWeight, float inValue);
     Item (string description);
-    //~Item();
+    ~Item();
 
-	string getShortDescription();
-    string getLongDescription();
-    int getValue();
-    void setValue(int value);
-	int getWeaponCheck();
-	void setWeaponCheck(int weaponCheck);
+    inline string getShortDescription(){
+        return description;
+    }
+
+    inline string getLongDescription(){
+        return " item(s), " + description + ".\n";
+    }
+
+    inline int getValue(){
+        return value;
+    }
+
+    inline void setValue(int value){
+        this->value=value;
+    }
+
 };
 
 #endif /*ITEM_H_*/

@@ -1,41 +1,48 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
 
-#include "mainwindow.h"
-#include <vector>
 #include <string>
-#include "item.h"
+#include <iostream>
 using namespace std;
-class Item;
 
 
 class Character {
 private:
-     string description;
-     int health;
-     vector < Item *> itemsInCharacter;
+
+protected:
+    string description;
+    int health;
+
 public:
 
     Character(string description, int health);
     //~Character();
 
-	string shortDescription();
-	string longDescription();
+    inline int getHealth(){
+        return health;
+    }
 
-    void addItems(Item *Item);
-    //bool compareItems(string key);
-    string displayItems();
-    bool getItem(string itemDesc);
-
-    vector<Item*>getItems();
-    int itemListSize();
-    int getHealth();
     void setHealth(int health);
 
-    //Use pointers to achieve this optimally
-    void deleteItem(int index);
 
+    inline string getDescription(){
+        return description;
+    }
 
+/*
+    Character operator-(Character& c){
+        {
+            cout<<"Entered method"<<endl;
+            int x = this->getHealth();
+            cout<<x<<endl;
+            int y = c.getHealth();
+            cout<<y<<endl;
+            int z = x-y;
+            cout<<z<<endl;
+
+          return Character("Result",z);
+        }
+    };*/
 
 };
 

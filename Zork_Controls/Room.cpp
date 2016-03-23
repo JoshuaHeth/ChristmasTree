@@ -18,10 +18,6 @@ void Room::setExits(Room *up, Room *right, Room *down, Room *left) {
         exits["left"] = left;
 }
 
-string Room::shortDescription() {
-	return description;
-}
-
 string Room::longDescription() {
     //return "room = " + description + ".\n" + displayItem() + exitString();
     if (description.compare("Prison") == 0)
@@ -110,8 +106,8 @@ Room* Room::nextRoom(string direction) {
     {
      if(this->getDoor(direction)->getLock()==true)
         {
-            //cout << "Direction : " << direction << "\n" << endl;
-            cout << this->getDoor(direction)->getDescription() << " is locked." << endl;
+
+            //cout << this->getDoor(direction)->getDescription() << " is locked." << endl;
             return NULL;
         }
     }
@@ -126,10 +122,10 @@ Door* Room::getDoor(string direction)
     int x = doorsInRoom.size();
     int i =0;
 
-    while(i<x && x!=ZERO)
+    while(i<x && x!=0)
     {
      if(doorsInRoom[i]->getDirection().compare(direction)==0)
-         x=ZERO;
+         x=0;
 
      else
          i++;
@@ -147,19 +143,19 @@ void Room::addDoor(Door *inDoor){
 }
 
 
-string Room::unlockDoor(Character *testCharacter)
+string Room::unlockDoor(Hero *testCharacter)
 {
     int sizeDoors = doorsInRoom.size();
     int sizeItems = testCharacter->itemListSize();
     bool found;
-    string doorName, itemName;
+    string doorName;
 
-        for (int i = ZERO; i<sizeDoors; i++)
+        for (int i = 0; i<sizeDoors; i++)
         {
             if(doorsInRoom[i]->getLock() == true)
             {
                 doorName = doorsInRoom[i]->getDescription()+"Keycard";
-                for(int j = ZERO; j<sizeItems; j++)
+                for(int j = 0; j<sizeItems; j++)
                     {
                         //itemName = list[j].getShortDescription();
                         found =  testCharacter->getItem(doorName);
@@ -190,9 +186,9 @@ string Room::displayDoor()
     if (sizeItems < 1) {
         tempString = "\nNo doors in room";
         }
-    else if (sizeItems > ZERO) {
-       int x = (ZERO);
-        for (int n = sizeItems; n > ZERO; n--) {
+    else if (sizeItems > 0) {
+       int x = (0);
+        for (int n = sizeItems; n > 0; n--) {
             tempString = "\n"+tempString + doorsInRoom[x]->getDescription()+" : " ;
             x++;
             }
@@ -206,9 +202,9 @@ string Room::displayItem() {
     if (sizeItems < 1) {
         tempString = "\nNo items in room";
         }
-    else if (sizeItems > ZERO) {
-       int x = (ZERO);
-        for (int n = sizeItems; n > ZERO; n--) {
+    else if (sizeItems > 0) {
+       int x = (0);
+        for (int n = sizeItems; n > 0; n--) {
             tempString = tempString + itemsInRoom[x]->getShortDescription() + "  " ;
             x++;
             }
@@ -221,20 +217,17 @@ int Room::isItemInRoom(string inString)
 {
     int sizeItems = (itemsInRoom.size());
     if (sizeItems < 1)
-    {
         return false;
-    }
 
-    else if (sizeItems > ZERO) {
-        for (int n = ZERO; n < sizeItems; n++) {
+    else
+        {
+        for (int n = 0; n < sizeItems; n++) {
             // compare inString with short description
             int tempFlag = inString.compare( itemsInRoom[n]->getShortDescription());
 
-                if (tempFlag == ZERO)
-                {
-                    itemsInRoom.erase(itemsInRoom.begin()+n);
+                if (tempFlag == 0)
                     return true;
-                }
+
             }
         }
     return false;
@@ -244,11 +237,11 @@ Item* Room::getItem(string command)
 {
     int sizeItems = (itemsInRoom.size());
 
-       int x = (ZERO);
-        for (int n = sizeItems; n > ZERO; n--)
+       int x = (0);
+        for (int n = sizeItems; n > 0; n--)
         {
-            if(itemsInRoom[x]->getShortDescription().compare(command)==ZERO)
-                n = ZERO;
+            if(itemsInRoom[x]->getShortDescription().compare(command)==0)
+                n = 0;
             else
                 x++;
         }
@@ -260,12 +253,12 @@ bool Room::checkForDoor(string direction)
 {
     int sizeItems = (doorsInRoom.size());
 
-     if (sizeItems > ZERO)
+     if (sizeItems > 0)
      {
-       int x = ZERO;
-        for (int n = sizeItems; n > ZERO; n--)
+       int x = 0;
+        for (int n = sizeItems; n > 0; n--)
         {
-            if(direction.compare(doorsInRoom[x]->getDirection())==ZERO)
+            if(direction.compare(doorsInRoom[x]->getDirection())==0)
                 return true;
             else
                 x++;

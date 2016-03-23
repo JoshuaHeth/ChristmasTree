@@ -1,5 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+#define TIME_LEFT 60
 
 #include <QtDebug>
 
@@ -8,12 +9,14 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QLabel>
+#include <QMessageBox>
+#include <QTimer>
 
 #include <QGraphicsRectItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-#include "Character.h"
+//#include "Character.h"
 #include "Command.h"
 #include "Parser.h"
 #include "Room.h"
@@ -24,6 +27,7 @@
 #include <stdlib.h>
 #include <sstream>
 #include <QButtonGroup>
+#include "hero.h"
 
 
 using namespace std;
@@ -70,17 +74,25 @@ private slots:
 
     void on_btn_ObservationDoorKeycard_clicked();
 
-    void on_btn_MainStairwellDoorKeycard_clicked();
-
     void on_btn_BattleDoorKeycard_clicked();
 
     void on_btn_ObservationDoor_pressed();
 
     void on_btn_BattleDoor_pressed();
 
-    void on_btn_StairwellLevel1_pressed();
-
     void on_btn_HealthPack_clicked();
+
+    void on_btn_Gun_clicked();
+
+    void on_btn_Riddle_clicked();
+
+    void on_btn_Villian_pressed();
+
+    void on_btn_Quit_pressed();
+
+    void on_btn_Reset_pressed();
+
+    void clock();
 
 private:
     Ui::MainWindow *ui;
@@ -90,17 +102,25 @@ private:
     Room *currentRoom;
     vector <Room*> rooms;
     QGraphicsRectItem *rect;
-    Room *prison, *observation, *battle, *mainStairwell, *hallway, *cockpit, *sickbay;//, *riddle, *secondaryStairwell, *armoury;
-    Door *obsrvDoor, *btlDoor, *hallwayDoor;//,*armDoor, *stairs ;
-    Character *testCharacter;
+    Room *prison, *observation, *battle, *mainStairwell, *hallway, *cockpit, *sickbay;
+    Door *obsrvDoor, *btlDoor, *hallwayDoor, *cockpitDoor;
+    Hero *testHero;
+    Character *testVillian;
     QString *str;
+    QTimer *timer;
+    bool finished;
+    int inventory, remainder;
 
     /*For visibility control of  QPushButtons/QLabels
     QList<QPushButton *> btn_List;
     QList<QLabel *> lbl_List;*/
 
-    bool finished;
-    void createRooms();
+
+    void gameSetup();
+    void uiSetup();
+    void doorSetup();
+    void roomSetup();
+    //void clock();
     void printWelcome();
     bool processCommand(Command command);
     void printHelp();
@@ -112,19 +132,18 @@ private:
     void teleport();
     void setListViewText();
     void addToListView(QString s);
+    int addItems(string item);
 
 
     void buttonCommand(string s);
     void positionCharacter();
     void openLock();
+    int openDoor();
     void checkLock();
     void displayCharacterItems();
     string intToString(int value);
 
-    void displayHealth();
-
-    //QObject controls
-    //void changeLevelDisplay();
+    void displayHealth(Character* c);
 
     //inline method for clearing the QStringList used to display text to the UI TextListView
     inline void clearListView(){

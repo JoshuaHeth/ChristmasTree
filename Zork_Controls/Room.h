@@ -7,12 +7,12 @@
 #include "item.h"
 #include "door.h"
 #include "Command.h"
-#include "Character.h"
+#include "hero.h"
 //#include "mainwindow.h"
 
 using namespace std;
 using std::vector;
-class Character;
+class Hero;
 
 class Room {
 
@@ -28,10 +28,12 @@ private:
 public:
 
     Room(string description, int flag);
-    //~Room();
+    ~Room();
 
     void setExits(Room *up, Room *right, Room *down, Room *left);
-	string shortDescription();
+    inline string shortDescription() {
+        return description;
+    }
     string longDescription();
 	Room* nextRoom(string direction);
 
@@ -53,26 +55,11 @@ public:
     string displayDoor();
 
     //Pass reference to vector. Vector will be edited.
-    string unlockDoor(Character *testCharacter);
+    string unlockDoor(Hero *testCharacter);
 
     bool checkForDoor(string direction2);
     Door* getDoor(string direction);
 };
 
-/*********MODIFY TO FIT
-template <typename T>
-void addToList (T *addedValue){
-
-    //Check to see if variable points to an object of Item type.
-    if(dynamic_cast<Item*>(addedValue))
-        itemsInRoom.push_back(addedValue);
-
-    else
-        doorsInRoom.push_back(addedValue);
-
-}
-
-
-};*/
 
 #endif

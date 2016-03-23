@@ -13,12 +13,23 @@ private:
 
 public:
     Door(string description,bool locked, string direction);
-    //~Door();
+    ~Door();
 
-    bool getLock();
-    string getDescription();
-    void setLock(bool key);
-    string getDirection();
+    inline bool getLock(){
+        return locked;
+    }
+
+    inline string getDescription(){
+        return description;
+    }
+
+    inline void setLock(bool key){
+        locked = key;
+    }
+
+    inline string getDirection(){
+        return direction;
+    }
 
 };
 
