@@ -66,7 +66,7 @@
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>0</y>
+      <y>10</y>
       <width>861</width>
       <height>471</height>
      </rect>
@@ -127,7 +127,7 @@
       <string/>
      </property>
      <property name="pixmap">
-      <pixmap resource="icons.qrc">:/opened_door.png</pixmap>
+      <pixmap resource="icons.qrc">:/closed_door.png</pixmap>
      </property>
     </widget>
     <widget class="QLabel" name="lbl_SickbayDoor">
@@ -379,35 +379,6 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="btn_CockpitDoor">
-     <property name="geometry">
-      <rect>
-       <x>600</x>
-       <y>260</y>
-       <width>51</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="icons.qrc">
-       <normaloff>:/closed_door.png</normaloff>:/closed_door.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="flat">
-      <bool>true</bool>
-     </property>
-    </widget>
     <widget class="QPushButton" name="btn_Riddle">
      <property name="geometry">
       <rect>
@@ -538,7 +509,36 @@
       </font>
      </property>
      <property name="text">
-      <string>Test</string>
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_VillianID">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>130</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Who is that ?</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_CockpitDoor">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>250</y>
+       <width>41</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="icons.qrc">:/closed_door.png</pixmap>
      </property>
     </widget>
    </widget>
@@ -686,6 +686,32 @@
     </property>
     <property name="text">
      <string>Quit</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_ID">
+    <property name="geometry">
+     <rect>
+      <x>870</x>
+      <y>340</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Who Am I ?</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_Friends">
+    <property name="geometry">
+     <rect>
+      <x>870</x>
+      <y>370</y>
+      <width>131</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Where are my Friends ?</string>
     </property>
    </widget>
   </widget>

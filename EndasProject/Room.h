@@ -6,7 +6,6 @@
 #include <vector>
 #include "item.h"
 #include "door.h"
-#include "Command.h"
 #include "hero.h"
 //#include "mainwindow.h"
 
@@ -37,26 +36,34 @@ public:
     string longDescription();
     Room* nextRoom(string direction);
 
-    void setFlag(int entered);
-    int getFlag();
+    inline void setFlag(int entered){
+        flag = entered;
+    }
 
-    void addItem(Item *inItem);
-    string displayItem();
+    inline int getFlag(){return flag;}
+
+    //Item methods
     int isItemInRoom(string inString);
     void removeItemFromRoom(int location);
-    Item* getItem(string command);
+    Item* getItem(string item);
     int numberOfItems();
 
     vector<int> getCharacterPosition();
-    void setCharacterPosition(int x, int y);
+    inline void setCharacterPosition(int x, int y){
+        characterPosition.push_back(x);
+        characterPosition.push_back(y);
+    }
 
-    //Door methods/variables
-    void addDoor(Door *inDoor);
-    string displayDoor();
+    inline void addItem(Item *inItem) {
+        itemsInRoom.push_back(inItem);
+    }
 
-    //Pass reference to vector. Vector will be edited.
+    inline void addDoor(Door *inDoor){
+        doorsInRoom.push_back(inDoor);
+    }
+
+    //Door methods
     string unlockDoor(Hero *testCharacter);
-
     bool checkForDoor(string direction2);
     Door* getDoor(string direction);
 };

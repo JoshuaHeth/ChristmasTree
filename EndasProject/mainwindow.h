@@ -16,9 +16,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-//#include "Character.h"
-#include "Command.h"
-#include "Parser.h"
 #include "Room.h"
 #include "item.h"
 #include "door.h"
@@ -26,7 +23,6 @@
 #include <string>
 #include <stdlib.h>
 #include <sstream>
-#include <QButtonGroup>
 #include "hero.h"
 #include "riddledialog.h"
 
@@ -47,15 +43,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    //ZorkUL();
     void play(QGraphicsRectItem *rectItem);
-    string go(string direction);
 
     //Function Template to get string values.
     template <typename T> string valueToString (const T value){
-        T strValue = value;
         ostringstream temp;
-        temp<<strValue;
+        temp<<value;
         return temp.str();
     }
 
@@ -93,61 +86,41 @@ private slots:
 
     void clock();
 
-    void on_btn_CockpitDoor_clicked();
+    void on_btn_ID_clicked();
+
+    void on_btn_VillianID_clicked();
+
+    void on_btn_Friends_clicked();
 
 private:
     Ui::MainWindow *ui;
     QStringListModel *model;
     QStringList stringList;
-    Parser parser;
-    Room *currentRoom;
+    Room *currentRoom, *nextRoom;
     vector <Room*> rooms;
     QGraphicsRectItem *rect;
     Room *prison, *observation, *battle, *mainStairwell, *hallway, *cockpit, *sickbay;
-    Door *obsrvDoor, *btlDoor, *hallwayDoor, *cockpitDoor;
+    Door *obsrvDoor, *btlDoor, *hallwayDoor, *cockpitDoor, *hallwayDoor2;
     Hero *testHero;
     Character *testVillian;
-    QString *str;
+    QString str;
     QTimer *timer;
-    bool finished;
-    bool riddleCorrect;
     int inventory, remainder;
-
-    /*For visibility control of  QPushButtons/QLabels
-    QList<QPushButton *> btn_List;
-    QList<QLabel *> lbl_List;*/
-
 
     void gameSetup();
     void uiSetup();
     void doorSetup();
     void roomSetup();
-    //void clock();
     void printWelcome();
-    bool processCommand(Command command);
-    void printHelp();
-    void goRoom(Command command);
+    void goRoom(string direction);
 
-
-    void createItems();
-    void displayItems();
-    void teleport();
     void setListViewText();
-    void addToListView(QString s);
     int addItems(string item);
 
-
-    void buttonCommand(string s);
     void positionCharacter();
-    void openLock();
     int openDoor();
-    void checkLock();
-    void displayCharacterItems();
-    string intToString(int value);
-
     void displayHealth(Character* c);
 
-    void setRiddleAnswer(bool answer);
     //inline method for clearing the QStringList used to display text to the UI TextListView
     inline void clearListView(){
         stringList.clear();

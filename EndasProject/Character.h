@@ -16,7 +16,9 @@ protected:
 public:
 
     Character(string description, int health);
-    //~Character();
+    ~Character(){}
+
+    virtual string const whatAmI(){return "\nThat is a Narlak!!!\nShoot him now.";}
 
     inline int getHealth(){
         return health;
@@ -29,20 +31,16 @@ public:
         return description;
     }
 
-/*
-    Character operator-(Character& c){
-        {
-            cout<<"Entered method"<<endl;
-            int x = this->getHealth();
-            cout<<x<<endl;
-            int y = c.getHealth();
-            cout<<y<<endl;
-            int z = x-y;
-            cout<<z<<endl;
 
-          return Character("Result",z);
+
+    Character& operator-(Character &c)
+        {
+           this->health = this->getHealth()-c.getHealth();
+           return *this;
         }
-    };*/
+
+
+
 
 };
 

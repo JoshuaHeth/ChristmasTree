@@ -15,21 +15,18 @@ class RiddleDialog : public QDialog
 public:
     explicit RiddleDialog(QWidget *parent = 0);
     ~RiddleDialog();
-    bool getAnswer();
+
+    inline bool getAnswer(){
+        return answer;
+    }
+
 
 private slots:
-    void on_radioButton_1_clicked();
-
-    void on_radioButton_2_clicked();
-
-    void on_radioButton_3_clicked();
-
     void on_radioButton_4_clicked();
 
 private:
     Ui::RiddleDialog *ui;
     bool answer;
-    void setAnswer(bool possibleAnswer);
 };
 
 #endif // RIDDLEDIALOG_H
