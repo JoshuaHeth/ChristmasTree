@@ -5,17 +5,6 @@ Hero::Hero(string description, int health):Character(description,health)
 
 }
 
-
-
-string Hero::longDescription()
-{
-  string ret = this->description;
-  ret += "\n Item list:\n";
-  for (vector<Item *>::iterator i = itemsInCharacter.begin(); i != itemsInCharacter.end(); i++)
-    ret += "\t"+ (*i)->getLongDescription() + "\n";
-  return ret;
-}
-
 void Hero::addItems(Item *itemCheck) {
         itemsInCharacter.push_back(itemCheck);
 }
@@ -66,7 +55,7 @@ int Hero:: itemListSize()
 
 
 
-void Hero::deleteItem(int index)
+void Hero::deleteItem(int &index)
 {
     itemsInCharacter.erase(itemsInCharacter.begin()+index);
 }

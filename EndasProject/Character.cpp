@@ -7,9 +7,6 @@ Character::Character(string description, int health) {
 }
 
 
-
-
-
 void Character::setHealth(int health)
 {
     this->health += health;
@@ -22,3 +19,6 @@ void Character::setHealth(int health)
             this->health = 500;
 
 }
+
+
+

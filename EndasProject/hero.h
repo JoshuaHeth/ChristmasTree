@@ -13,20 +13,18 @@ private:
 public:
     Hero(string description, int health);
     ~Hero();
+    friend string getList(Hero*, Item*);
 
-
-    string longDescription();
+    virtual string const whatAmI(){return "\nI am the Hero.";}
 
     void addItems(Item *Item);
-    //bool compareItems(string key);
     string displayItems();
     bool getItem(string itemDesc);
 
     vector<Item*>getItems();
     int itemListSize();
 
-    //Use pointers to achieve this optimally
-    void deleteItem(int index);
+    void deleteItem(int &);
 
 };
 

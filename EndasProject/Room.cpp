@@ -51,10 +51,9 @@ string Room::longDescription() {
             return "Room - Battle"
                    "\n\nYou enter the room, the Narlak stops scratching his....Oh crap he's got"
                    "\na gun. Of course he does you numpty, you think he raided the ship with his"
-                   "\nfinger in his pocket?! He growls something unintelligible and fires his gun."
-                   "\nThe world grows black.";
+                   "\nfinger in his pocket?! What you gonna do!";
         }
-        else
+        else if(flag==1)
         {
             return  "Room - Battle"
                     "\n\nYou burst into the room, John Wayne swagger down to a tee! Hand on your weapon,"
@@ -62,6 +61,12 @@ string Room::longDescription() {
                     "\nHe growls and starts to bring up his gun. Pew Pew Pew - you start blasting. You "
                     "\nstand over your defeated foe, blow gently on the nozzle of your weapon. No smoke"
                     "\ncoming out of it but it's a key part of a gun battle!";
+        }
+
+            else
+        {
+            return "Room - Battle"
+                    "\n\nNothing in here but the smoking remains of the Narlak";
         }
     }
     else if (description.compare("Stairwell_Level_1") == 0)
@@ -119,16 +124,18 @@ Room* Room::nextRoom(string direction) {
     {
      if(this->getDoor(direction)->getLock()==true)
         {
-
-            //cout << this->getDoor(direction)->getDescription() << " is locked." << endl;
             return NULL;
         }
     }
-
-    //this->setEntered(1);
     return next->second; // If there is a room, remove the "second" (Room*)
                 // part of the "pair" (<string, Room*>) and return it.
 }
+
+vector<int> Room::getCharacterPosition()
+{
+    return characterPosition;
+}
+
 
 Door* Room::getDoor(string direction)
 {
@@ -147,15 +154,6 @@ Door* Room::getDoor(string direction)
 }
 
 
-void Room::addItem(Item *inItem) {
-    itemsInRoom.push_back(inItem);
-}
-
-void Room::addDoor(Door *inDoor){
-    doorsInRoom.push_back(inDoor);
-}
-
-
 string Room::unlockDoor(Hero *testCharacter)
 {
     int sizeDoors = doorsInRoom.size();
@@ -170,60 +168,22 @@ string Room::unlockDoor(Hero *testCharacter)
                 doorName = doorsInRoom[i]->getDescription()+"Keycard";
                 for(int j = 0; j<sizeItems; j++)
                     {
-                        //itemName = list[j].getShortDescription();
                         found =  testCharacter->getItem(doorName);
                         if(found)
                         {
-                        /*If an item matched to a specific door
-                            then return door name and delete used item.*/
+                        /*If an item matched to a specific door then unlock door*/
                             testCharacter->deleteItem(j);
                             doorsInRoom[i]->setLock(false);
-                            return (doorsInRoom[i]->getDescription());
+                            return ("Door has been unlocked.\n");
                         }
 
-                     }
-                return "You don`t have the key!";
+                    }
             }
         }
 
-        return "All doors are unlocked in current room!";
+        return "You don`t have the key!";
 
 }
-
-
-
-string Room::displayDoor()
-{
-    string tempString = "door(s) in room = ";
-    int sizeItems = (doorsInRoom.size());
-    if (sizeItems < 1) {
-        tempString = "\nNo doors in room";
-        }
-    else if (sizeItems > 0) {
-       int x = (0);
-        for (int n = sizeItems; n > 0; n--) {
-            tempString = "\n"+tempString + doorsInRoom[x]->getDescription()+" : " ;
-            x++;
-            }
-        }
-    return tempString;
-}
-
-string Room::displayItem() {
-    string tempString = "items in room = ";
-    int sizeItems = (itemsInRoom.size());
-    if (sizeItems < 1) {
-        tempString = "\nNo items in room";
-        }
-    else if (sizeItems > 0) {
-       int x = (0);
-        for (int n = sizeItems; n > 0; n--) {
-            tempString = tempString + itemsInRoom[x]->getShortDescription() + "  " ;
-            x++;
-            }
-        }
-    return tempString;
-    }
 
 
 int Room::isItemInRoom(string inString)
@@ -246,14 +206,15 @@ int Room::isItemInRoom(string inString)
     return false;
 }
 
-Item* Room::getItem(string command)
+
+Item* Room::getItem(string item)
 {
     int sizeItems = (itemsInRoom.size());
 
        int x = (0);
         for (int n = sizeItems; n > 0; n--)
         {
-            if(itemsInRoom[x]->getShortDescription().compare(command)==0)
+            if(itemsInRoom[x]->getShortDescription().compare(item)==0)
                 n = 0;
             else
                 x++;
@@ -261,6 +222,7 @@ Item* Room::getItem(string command)
         return(itemsInRoom[x]);
 
 }
+
 
 bool Room::checkForDoor(string direction)
 {
@@ -281,24 +243,6 @@ bool Room::checkForDoor(string direction)
     return false;
 }
 
-vector<int> Room::getCharacterPosition()
-{
-    return characterPosition;
-}
-
-void Room::setCharacterPosition(int x, int y)
-{
-    characterPosition.push_back(x);
-    characterPosition.push_back(y);
-}
 
 
-void Room :: setFlag(int entered)
-{
-    flag = entered;
-}
 
-int Room :: getFlag()
-{
-    return flag;
-}

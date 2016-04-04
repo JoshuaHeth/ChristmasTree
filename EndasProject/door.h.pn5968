@@ -1,9 +1,9 @@
 #ifndef DOOR_H
 #define DOOR_H
-#include "IEntry.h"
+#include "entry_interface.h"
 
 
-class Door:public IEntry
+class Door:public entry_interface
 {
 private:
     bool locked;
@@ -15,19 +15,18 @@ public:
     Door(string description,bool locked, string direction);
     ~Door();
     Door(const Door*);
-    Door(const Door*, string description);
 
     inline void setDescription(string description)
     {
         this->description = description;
     }
 
-    inline string getDescription(){
-        return description;
-    }
-
     inline bool getLock(){
         return locked;
+    }
+
+    inline string getDescription(){
+        return description;
     }
 
     inline void setLock(bool key){
