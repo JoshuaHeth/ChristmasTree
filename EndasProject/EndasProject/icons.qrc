@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+        <file>black.png</file>
+        <file>closed_door.png</file>
+        <file>down.png</file>
+        <file>keycard.png</file>
+        <file>left.png</file>
+        <file>mainLevel2.png</file>
+        <file>opened_door.png</file>
+        <file>pacman.png</file>
+        <file>pacman_boss.png</file>
+        <file>pacman_cop.png</file>
+        <file>pacman_medic.png</file>
+        <file>pacman_riddle.png</file>
+        <file>red_cross.png</file>
+        <file>right.png</file>
+        <file>SecondLevel.png</file>
+        <file>stairs_closed.png</file>
+        <file>stairs_open.png</file>
+        <file>stop.png</file>
+        <file>up.png</file>
+        <file>gun.png</file>
+        <file>question.png</file>
+        <file>spaceSplashScreen.png</file>
+    </qresource>
+</RCC>
